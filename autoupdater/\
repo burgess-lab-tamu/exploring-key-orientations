@@ -1,0 +1,42 @@
+import sys
+import xml.dom.minidom
+#from sets import Set
+import datetime
+from dateutil.tz import tzlocal
+
+now = datetime.datetime.now(tzlocal())
+#idDoc = xml.dom.minidom.parse(sys.argv[1])
+idDoc = open(sys.argv[1],'r')
+dbFile = open(sys.argv[3], 'a')
+idSet =  set()
+
+#for node in idDoc.getElementsByTagName("PDB"):
+for line in idDoc:
+   #id = node.getAttribute("structureId")
+   if 'structureId' in line:
+      id = line[line.find('"')+1: line.rfind('"')]
+      idSet.add(id)
+
+print idSet
+print '<entityInfo>'
+doc = xml.dom.minidom.parse(sys.argv[2])
+for node in doc.getElementsByTagName("PDB"):
+   id = node.getAttribute("structureId")
+   releaseDate = node.getAttribute("release_date")
+      #print id, 
+   if id not in idSet:
+      dbFile.write(id)
+      dbFile.write("\t\t\t")
+      dbFile.write(releaseDate.ljust(30))
+      dbFile.write("\t\t\t")
+      dbFile.write(now.strftime("%m/%d/%Y %H:%M %Z"))
+      dbFile.write("\n")
+      #print 'check'
+      print node.toxml()
+
+print '</entityInfo>'
+
+for i in range(0,60):
+   dbFile.write("-")
+
+dbFile.close()

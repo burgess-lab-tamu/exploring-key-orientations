@@ -1,0 +1,15 @@
+void invert_matrix(double* arr,double* out,int N);
+void matrix_product(double* A,double* B,double* C,int N);
+void eigen_solve(double* arr,double* evals,double* evecs,int N);
+void mul_mat_vec(double* mat,double* vec,double* out,int N);
+void transpose(double* X,double* Xt,int N);
+double det(double* X,int N);
+void eye(double* A,int N);
+void covariance(double cov[3][3],double* A,double* B,int N);
+void vec_diff(double* A,double* B,double* C);
+void vec_add(double* A,double* B,double* C);
+void get_center(double* X,int N,double* cen);
+double dist2(double* A,double* B);
+void SVD(double* _A,double* _U,double* _S,double* _Vt,int N);
+void superpose(double *X,double *Y,int N,double* rot);
+double superpose_rms(double *X,double *Y,int N,double* rot);

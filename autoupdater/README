@@ -1,0 +1,75 @@
+
+12/24/2020 (Tom Ioerger)
+----------
+
+Making changes to PDB autoUpdater due to RCSB retiring REST API and 
+forcing us to change to new Data API.
+
+Here is the new update procedure (first part), which identifies
+new PDBs and obtains info on number and types of protein chains.
+
+> updatePDBinfo.sh
+
+This downloads PDBids.json and compares them with PDBinfo.txt,
+then downloads data on missing PDBs, adds them to PDBinfo.txt,
+and regenerates PPcomplexes.txt.
+
+At this point, we still need to make sure the actual structure
+files for the new PDBs are downloaded. (to be done)
+
+PPcomplexes.txt should then feed into interfaces.py for identifying
+pairs of chains in contact and calculating sizes of interfaces.
+
+
+
+In this procedure, the key database file is 'PDBinfo.txt'.
+It has the following columns for all structures in the PDB:
+ * timestamp (which it was added to PDBinfo.txt)
+ * PDB id
+ * year deposited
+ * experimental method (e.g. X-ray, EM, NMR...)
+ * resolution
+ * total chains
+ * number of types chains (grouped by identity, i.e. factored by symmetry copies)
+ * number of distinct types (groups) of protein chains
+ * a list of chain groups, expressed as type:XYZ, where type is 'prot' or 'nuc_' and XYZ are 1-letter chain ids 
+
+In selecting complexes in 'PPcomplexes.txt' (currently, about 23k), the following constraints are applied:
+ 1) xray structure with resolution better than 3.0A
+ 2) at least 2 distinct types of protein chains (e.g. for heterodimers)
+ 3) at most 20 total chains
+
+
+Use PDBinfo-12-23-20.txt (10Mb) as a starting point, which contains
+information on ~172k structures currently in the PDB.  (It took about
+10 min and 350 Gb (.json) to generate this the first time.)  Each time
+you run the updatePDBinfo.sh script above, it will check for new
+(i.e. missing) structures and append the information to PDBinfo.txt.
+You can test it by deleting a row from this file and see if it gets
+re-added.
+
+
+Note: users might want to backup PDBinfo.txt before running this.
+PPcomplexes.txt can be generated from it.  The other files 
+like missing_pdbs.txt and .json files are just transient intermediates.
+
+
+
+4/12/2017 (Rahul Jain)
+---------
+
+- Extract the folder autoUpdater.zip in a directory where you want to run the scripts. 
+- All the new downloaded pdb files will be stored in the /apps/burgess/pdb folder.
+- After extracting, go to the directory where updater.sh file is present and run the following command:
+            sh updater.sh 
+     
+- On Lms1 these files are present in the directory  /home/rhljain08/autoUpdater
+- This will search for the pdbs which are not there in our system and download them. These pdb files will be stored in the  ‘/apps/burgess/pdb’ folder.
+- The following files will be updated:
+	1) PDBinfo: This contains the information about all the pdbs that we have updated and processed in our system.
+	2) PDBids: This contains the structure IDs of all the pdbs that we have processed.
+	3) PPcomplexes: This file contains the structure ids and other information about those pdbs which are the hetero complexes and have interfaces between different chains.
+	4) interface_pairs.hetero: This file contains the structure ids of the pdbs along with the information about which pairs have interfaces between them.
+	5) interface_pairs.hetero.sizes: This file contains the structure ids of the pdbs along with the information about which pairs have interfaces between them along with how many residues of each pair are in contact with each other. Pairs which have less than 3 residues in contact are filtered out.
+	6) interface_pairs.hetero.sym.sizes: This files further filter out the pairs in the above file and retains the best one for each pair of chains which has the largest number of interfaces.
+	7) updatedPdbs.txt:  This is a record file which contains the structure ids of the pdbs along with the date they were released and the date they were analysed and updated in our system. This file looks like below.

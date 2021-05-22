@@ -1,0 +1,19 @@
+4/24/15:
+  added contacts.py
+    here is a test case, provided you have downloaded 1hwg.pdb in the local directory
+    > python contacts.py 1hwg.pdb A B > contacts_1hwg.out
+
+  added triplet_search.cpp (and makefile and gsl_utils.c, etc.)
+    test example
+    > triplet_search mine35_lt3.pdb "16,35,20,40,26,46" 1ITB.pdb A B > mine35_search_1ITB.pdb    
+
+4/17/17:
+  added getpdb.py - automatically downloads PDB files
+    > python getpdb.py 1ivo
+
+  added superpose_svd.py - routine for calculating rotation matrices between coords
+     > python superpose_svd.py 1ivo_C.pdb 1ivo_D.pdb
+
+4/12/17:
+  created src/ dir in PPI project on github
+  note: split out KDTree.py from utils.py
